@@ -29,6 +29,10 @@ unit_test_all_mechs_spdk(core timer_oneshot timer_oneshot.c)
 unit_test_all_mechs(core doorbell_remove doorbell_remove.c)
 unit_test_all_mechs(core doorbell_sender doorbell_sender.c)
 
+# More armed deferrals and timers than the initial 256-entry arrays before the
+# loop runs: they must grow, not overflow.  No network.
+unit_test_all_mechs(core deferral_timer_capacity deferral_timer_capacity.c)
+
 foreach(mech ${EVPL_MECHANISMS})
     set_tests_properties(libevpl/core/doorbell_remove_${mech}
                          PROPERTIES TIMEOUT 10)

@@ -13,6 +13,15 @@ evpl_defer(
     int index;
 
     if (!deferral->armed) {
+        /* Grow rather than write past the end: any number of distinct
+         * deferrals may be armed before the loop next runs. */
+        if (evpl->num_active_deferrals == evpl->max_active_deferrals) {
+            evpl->max_active_deferrals *= 2;
+            evpl->active_deferrals      = evpl_realloc(evpl->active_deferrals,
+                                                       evpl->max_active_deferrals *
+                                                       sizeof(struct evpl_deferral *));
+        }
+
         deferral->armed = 1;
         index           = evpl->num_active_deferrals;
 

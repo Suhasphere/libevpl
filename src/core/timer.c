@@ -93,6 +93,13 @@ evpl_timer_insert(
     /* interval is in microseconds; arm the deadline in stopwatch ticks. */
     timer->deadline = evpl_now_ticks() + evpl_ns_to_ticks(timer->interval * 1000);
 
+    /* Grow rather than write past the end of the heap. */
+    if (evpl->num_timers == evpl->max_timers) {
+        evpl->max_timers *= 2;
+        evpl->timers      = evpl_realloc(evpl->timers,
+                                         evpl->max_timers * sizeof(struct evpl_timer *));
+    }
+
     evpl->timers[evpl->num_timers] = timer;
 
     i = evpl->num_timers++;
